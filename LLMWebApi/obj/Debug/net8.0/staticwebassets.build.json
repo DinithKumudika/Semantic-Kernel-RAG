@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "xSclKzA1sSyVMEfIpRsfhSZhi0+iMyQOTsn0kTllSqQ=",
+  "Source": "LLMWebApi",
+  "BasePath": "_content/LLMWebApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

@@ -1,0 +1,6 @@
+@LLMWebApi_HostAddress = http://localhost:5031
+
+GET {{LLMWebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
