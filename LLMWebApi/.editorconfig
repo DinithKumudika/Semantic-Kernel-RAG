@@ -1,0 +1,4 @@
+[*.cs]
+
+# IDE0025: Use expression body for property
+csharp_style_expression_bodied_properties = false

@@ -7,19 +7,19 @@ namespace LLMWebApi.Services {
     public class BotService : Bot {
         public static void Init(WebApplicationBuilder builder) 
         {
-            Bot.AddOpenAIConfiguration(builder);
-            Bot.CreateBasicKernelBuilder();
-            Bot.BuildKernel();
+            AddOpenAIConfiguration(builder);
+            CreateBasicKernelBuilder();
+            BuildKernel();
         }
         public static IKernelBuilder KernelBuilder {
             get {
-                return Bot.kernelBuilder!;
+                return kernelBuilder!;
             }
         }
 
         public static Kernel BotKernel {
             get {
-                return Bot.botKernel!;
+                return botKernel!;
             }
         }
     }

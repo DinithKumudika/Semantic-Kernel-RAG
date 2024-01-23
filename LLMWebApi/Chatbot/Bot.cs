@@ -6,22 +6,19 @@ namespace LLMWebApi.Chatbot
 {
     public class Bot
     {
-        public static IConfigurationRoot? Configuration { get; set; }
-
         protected static IKernelBuilder? kernelBuilder;
         protected static Kernel? botKernel;
         protected static OpenAIConfig? openAIConfig;
-        protected static QdrantConfig? qdrantConfig;
 
         protected static void AddOpenAIConfiguration(WebApplicationBuilder builder)
         {
             // Get Open AI configuration from user secrets
-
             openAIConfig = builder.Configuration.GetSection("OpenAI").Get<OpenAIConfig>() ?? throw new ConfigurationNotFoundException();
 
-            if (openAIConfig.ModelId.Length > 0 && openAIConfig.ApiKey.Length > 0 && openAIConfig.OrgId.Length > 0)
+            if (openAIConfig!.ChatModelId!.Length > 0 && openAIConfig!.EmbeddingModelId!.Length > 0 && openAIConfig!.ApiKey!.Length > 0 && openAIConfig!.OrgId!.Length > 0)
             {
-                Console.WriteLine($"using model {openAIConfig.ModelId}");
+                Console.WriteLine($"chat model : {openAIConfig.ChatModelId}");
+                Console.WriteLine($"embedding model : {openAIConfig.EmbeddingModelId}");
                 Console.WriteLine("Open AI Configuration Completed...");
             }
             else
@@ -30,12 +27,7 @@ namespace LLMWebApi.Chatbot
             }
         }
 
-        protected static void AddQdrantConfiguration(WebApplicationBuilder builder) 
-        {
-            // Get Qdrant configuration from user secrets
-        }
-
-        protected static void BuildKernel() 
+        protected static void BuildKernel()
         {
             botKernel = kernelBuilder!.Build();
         }
@@ -51,13 +43,21 @@ namespace LLMWebApi.Chatbot
                 .AddDebug()
             );
 
-            kernelBuilder.AddOpenAIChatCompletion(
-                openAIConfig.ModelId,
-                openAIConfig.ApiKey,
+#pragma warning disable SKEXP0011 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            kernelBuilder
+            .AddOpenAIChatCompletion(
+                openAIConfig!.ChatModelId!,
+                openAIConfig!.ApiKey!,
+                openAIConfig.OrgId
+            )
+            .AddOpenAITextEmbeddingGeneration(
+                openAIConfig!.EmbeddingModelId!,
+                openAIConfig!.ApiKey!,
                 openAIConfig.OrgId
             );
+#pragma warning restore SKEXP0011 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
-            if(kernelBuilder != null) 
+            if (kernelBuilder != null)
             {
                 Console.WriteLine("Basic Kernel Configuration Completed...");
             }

@@ -10,11 +10,11 @@
 using System;
 using System.Reflection;
 
-[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("8d024b96-6abd-4d04-a260-b4ce19b8142c")]
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("30a16e25-d349-40dc-949a-d43574394dca")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("LLMWebApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4869b7fd9c22c178dfa1cf728b03e4b92843ee65")]
 [assembly: System.Reflection.AssemblyProductAttribute("LLMWebApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LLMWebApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
