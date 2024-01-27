@@ -28,9 +28,9 @@ namespace LLMWebApi.Controllers
             var docFolder = Path.Combine(dataFilePath, category);
             var documentService = new DocumentService(docFolder);
 
-            var MemoryUid = await embeddingService.BuildEmbeddings(category, documentService);
+            var embeddings = await embeddingService.BuildEmbeddings(category, documentService);
 
-            return Results.Ok(MemoryUid);
+            return Results.Ok(embeddings);
         }
 
         [HttpDelete("{collection}")]

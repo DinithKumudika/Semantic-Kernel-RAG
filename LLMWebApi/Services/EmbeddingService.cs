@@ -32,11 +32,11 @@ namespace LLMWebApi.Services
         }
 
 #pragma warning disable SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-        public async Task<List<string>> BuildEmbeddings(string collection, DocumentService documentService)
+        public async Task<List<Dictionary<string, string>>> BuildEmbeddings(string collection, DocumentService documentService)
 #pragma warning restore SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
         {
             List<Dictionary<string, object>> documents = documentService.ExtractFromDocumentDir();
-            List<string> uids = [];
+            List<Dictionary<string, string>> embeddings = [];
 
             if(documents.Count != 0)
             {
@@ -57,17 +57,22 @@ namespace LLMWebApi.Services
                         {
                             Console.WriteLine($"creating embedding for paragraph {paragraphs.IndexOf(paragraph) + 1}...");
 
-                            var id = GetEmbeddingId(documentName, pageNo, paragraphs.IndexOf(paragraph));
-
+                            string id = GetEmbeddingId(documentName, pageNo, paragraphs.IndexOf(paragraph));
                             string uid = await VectorDbService.Memory.SaveInformationAsync(collection, paragraph, id);
 
-                            Console.WriteLine($"id of saved memory record: {uid}");
-                            uids.Add(uid);
+                            Console.WriteLine($"id of saved memory record: {id}");
+                            Console.WriteLine($"unique id of saved memory record: {uid}");
+
+                            Dictionary<string, string> point = [];
+                            point.Add("uid", uid);
+                            point.Add("id", id);
+                            
+                            embeddings.Add(point);
                         } 
                     }
                 }
             }
-            return uids;
+            return embeddings;
         }
 
         public async Task RemoveEmbeddings(string collection, string uid)
