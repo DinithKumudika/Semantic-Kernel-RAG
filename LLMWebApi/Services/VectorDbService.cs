@@ -35,6 +35,7 @@ namespace LLMWebApi.Services {
 
             Console.WriteLine("--------Collections--------");
 
+
             foreach(var collection in collections) 
             {
                 Console.WriteLine(collection);
@@ -42,9 +43,32 @@ namespace LLMWebApi.Services {
             Console.WriteLine("---------------------------");
         }
 
-        public static void CreateEmbedding(string collection, string filePath) 
+        public static async Task<bool> HasCollection(string collection) 
         {
+            IList<string> collections = await memory!.GetCollectionsAsync();
 
+            if(collections.Contains(collection)) 
+            {
+                return true;
+            }
+
+            return false;
+
+        }
+
+        public static async Task<bool> CreateCollection(string collection) 
+        {
+            #pragma warning disable SKEXP0026 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            await memoryStore!
+            .CreateCollectionAsync(collection);
+            #pragma warning restore SKEXP0026 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            var isCollectionExists = await HasCollection(collection);
+            
+            if(isCollectionExists)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

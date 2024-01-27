@@ -16,6 +16,7 @@
           "Microsoft.SemanticKernel.Plugins.Core": "1.0.1-alpha",
           "Microsoft.SemanticKernel.PromptTemplates.Handlebars": "1.0.1",
           "Microsoft.SemanticKernel.Yaml": "1.0.1",
+          "PdfPig": "0.1.8",
           "Swashbuckle.AspNetCore": "6.4.0"
         },
         "runtime": {
@@ -524,6 +525,38 @@
           }
         }
       },
+      "PdfPig/0.1.8": {
+        "runtime": {
+          "lib/net6.0/UglyToad.PdfPig.Core.dll": {
+            "assemblyVersion": "0.1.8.0",
+            "fileVersion": "0.1.8.0"
+          },
+          "lib/net6.0/UglyToad.PdfPig.DocumentLayoutAnalysis.dll": {
+            "assemblyVersion": "0.1.8.0",
+            "fileVersion": "0.1.8.0"
+          },
+          "lib/net6.0/UglyToad.PdfPig.Fonts.dll": {
+            "assemblyVersion": "0.1.8.0",
+            "fileVersion": "0.1.8.0"
+          },
+          "lib/net6.0/UglyToad.PdfPig.Package.dll": {
+            "assemblyVersion": "0.1.8.0",
+            "fileVersion": "0.1.8.0"
+          },
+          "lib/net6.0/UglyToad.PdfPig.Tokenization.dll": {
+            "assemblyVersion": "0.1.8.0",
+            "fileVersion": "0.1.8.0"
+          },
+          "lib/net6.0/UglyToad.PdfPig.Tokens.dll": {
+            "assemblyVersion": "0.1.8.0",
+            "fileVersion": "0.1.8.0"
+          },
+          "lib/net6.0/UglyToad.PdfPig.dll": {
+            "assemblyVersion": "0.1.8.0",
+            "fileVersion": "0.1.8.0"
+          }
+        }
+      },
       "Stef.Validation/0.1.1": {
         "runtime": {
           "lib/net6.0/Stef.Validation.dll": {
@@ -999,6 +1032,13 @@
       "sha512": "sha512-HM4FQIW6SLj6KN4ic2/KsV8Xce3rLykC7rm+MAqNiUQOEuWQL6zwvjPRuEV2pGvFvVlND6bq9Ixe8UYEmsxXgQ==",
       "path": "microsoft.semantickernel.yaml/1.0.1",
       "hashPath": "microsoft.semantickernel.yaml.1.0.1.nupkg.sha512"
+    },
+    "PdfPig/0.1.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-lrqrQPAwziQV2E5uImAg1i3SpxDn5XdJ8q3sjRBgEdx1quq1ZftnKNyfp3sTY0J7OxpA14ryGBSSUdoGLGCHjw==",
+      "path": "pdfpig/0.1.8",
+      "hashPath": "pdfpig.0.1.8.nupkg.sha512"
     },
     "Stef.Validation/0.1.1": {
       "type": "package",

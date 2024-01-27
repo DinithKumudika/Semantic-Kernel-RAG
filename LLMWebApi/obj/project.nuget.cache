@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "4+WBHkC7WZdeehqgX8rimMr/WSPG4XeDWI6N1xs0epPU3yMRjaJsE+Nz53aCRaiDkvzYwyzaK0oF0YIVj2cxyg==",
+  "dgSpecHash": "elPQGZC/qllTaeX4GRbHfLGJF6DhvKsm+yIgiaKxXRb4On4bpboRnNeQDW9GgnDvGgz8Bo+rRjSBsQJQg5dTQw==",
   "success": true,
   "projectFilePath": "D:\\.NET development\\LLMWebApi\\LLMWebApi\\LLMWebApi.csproj",
   "expectedPackageFiles": [
@@ -59,6 +59,7 @@
     "C:\\Users\\dinit\\.nuget\\packages\\microsoft.semantickernel.plugins.core\\1.0.1-alpha\\microsoft.semantickernel.plugins.core.1.0.1-alpha.nupkg.sha512",
     "C:\\Users\\dinit\\.nuget\\packages\\microsoft.semantickernel.prompttemplates.handlebars\\1.0.1\\microsoft.semantickernel.prompttemplates.handlebars.1.0.1.nupkg.sha512",
     "C:\\Users\\dinit\\.nuget\\packages\\microsoft.semantickernel.yaml\\1.0.1\\microsoft.semantickernel.yaml.1.0.1.nupkg.sha512",
+    "C:\\Users\\dinit\\.nuget\\packages\\pdfpig\\0.1.8\\pdfpig.0.1.8.nupkg.sha512",
     "C:\\Users\\dinit\\.nuget\\packages\\stef.validation\\0.1.1\\stef.validation.0.1.1.nupkg.sha512",
     "C:\\Users\\dinit\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
     "C:\\Users\\dinit\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",

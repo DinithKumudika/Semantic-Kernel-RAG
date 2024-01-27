@@ -60,3 +60,10 @@ D:\.NET development\LLMWebApi\LLMWebApi\obj\Debug\net8.0\refint\LLMWebApi.dll
 D:\.NET development\LLMWebApi\LLMWebApi\obj\Debug\net8.0\LLMWebApi.pdb
 D:\.NET development\LLMWebApi\LLMWebApi\obj\Debug\net8.0\LLMWebApi.genruntimeconfig.cache
 D:\.NET development\LLMWebApi\LLMWebApi\obj\Debug\net8.0\ref\LLMWebApi.dll
+D:\.NET development\LLMWebApi\LLMWebApi\bin\Debug\net8.0\UglyToad.PdfPig.Core.dll
+D:\.NET development\LLMWebApi\LLMWebApi\bin\Debug\net8.0\UglyToad.PdfPig.DocumentLayoutAnalysis.dll
+D:\.NET development\LLMWebApi\LLMWebApi\bin\Debug\net8.0\UglyToad.PdfPig.Fonts.dll
+D:\.NET development\LLMWebApi\LLMWebApi\bin\Debug\net8.0\UglyToad.PdfPig.Package.dll
+D:\.NET development\LLMWebApi\LLMWebApi\bin\Debug\net8.0\UglyToad.PdfPig.Tokenization.dll
+D:\.NET development\LLMWebApi\LLMWebApi\bin\Debug\net8.0\UglyToad.PdfPig.Tokens.dll
+D:\.NET development\LLMWebApi\LLMWebApi\bin\Debug\net8.0\UglyToad.PdfPig.dll

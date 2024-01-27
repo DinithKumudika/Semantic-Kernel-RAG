@@ -2,9 +2,9 @@ using System.Text.Json;
 using Json.More;
 
 namespace SKTestApp.Helpers {
-    public static class OpenAIHelper 
+    public static class TokenUsage 
     {
-        public static void GetCreditCost(IReadOnlyDictionary<string, object?> metadata) 
+        public static void GetTokenCost(IReadOnlyDictionary<string, object?> metadata) 
         {
             var openAIUsage = metadata["Usage"];
             JsonDocument usageJson = openAIUsage.ToJsonDocument();

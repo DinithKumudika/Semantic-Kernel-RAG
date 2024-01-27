@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using LLMWebApi.Exceptions;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -37,7 +38,11 @@ namespace LLMWebApi.Chatbot
 #pragma warning disable SKEXP0011 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
         protected static void Init(Kernel kernel) {
 #pragma warning disable SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-            memoryStore = new QdrantMemoryStore(qdrantConfig!.Endpoint!, 1536);
+            memoryStore = new QdrantMemoryStore(
+                endpoint: qdrantConfig!.Endpoint!, 
+                vectorSize: 1536
+            );
+
             memory = new MemoryBuilder().WithMemoryStore(memoryStore)
             .WithLoggerFactory(kernel.LoggerFactory)
             .WithTextEmbeddingGeneration(

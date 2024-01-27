@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+using HandlebarsDotNet.Helpers;
 using LLMWebApi.Exceptions;
 using Microsoft.SemanticKernel;
 using static LLMWebApi.Configuration.Configuration;
@@ -43,19 +45,12 @@ namespace LLMWebApi.Chatbot
                 .AddDebug()
             );
 
-#pragma warning disable SKEXP0011 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
             kernelBuilder
             .AddOpenAIChatCompletion(
                 openAIConfig!.ChatModelId!,
                 openAIConfig!.ApiKey!,
                 openAIConfig.OrgId
-            )
-            .AddOpenAITextEmbeddingGeneration(
-                openAIConfig!.EmbeddingModelId!,
-                openAIConfig!.ApiKey!,
-                openAIConfig.OrgId
             );
-#pragma warning restore SKEXP0011 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
             if (kernelBuilder != null)
             {
