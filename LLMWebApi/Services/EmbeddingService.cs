@@ -32,6 +32,7 @@ namespace LLMWebApi.Services
         }
 
 #pragma warning disable SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+        
         public async Task<List<Dictionary<string, string>>> BuildEmbeddings(string collection, DocumentService documentService)
 #pragma warning restore SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
         {

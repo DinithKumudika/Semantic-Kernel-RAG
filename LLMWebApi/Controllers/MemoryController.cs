@@ -1,3 +1,4 @@
+using System.Text.Json;
 using HandlebarsDotNet.Helpers.Enums;
 using LLMWebApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -20,25 +21,25 @@ namespace LLMWebApi.Controllers
 
         // Create embeddings in a collection
         // http://localhost:5031/api/memory/create/terms-and-conditions
-        [HttpGet("create/{category}")]
-        public async Task<IResult> CreateMemory(string category)
+        [HttpPost("create/{collection}")]
+        public async Task<IResult> CreateMemory(string collection, [FromBody] dynamic data)
         {
-            Console.WriteLine($"adding memories to {category} collection");
+            Console.WriteLine($"adding memories to {collection} collection");
             string dataFilePath = Path.Combine(Directory.GetCurrentDirectory(), "data");
 
-            var docFolder = Path.Combine(dataFilePath, category);
+            var docFolder = Path.Combine(dataFilePath, data.GetProperty("dataDir").ToString());
             var documentService = new DocumentService(docFolder);
 
-            var embeddings = await embeddingService.BuildEmbeddings(category, documentService);
+            var embeddings = await embeddingService.BuildEmbeddings(collection, documentService);
 
             return Results.Ok(embeddings);
         }
 
         // Delete a memory from a collection
-        [HttpDelete("{collection}")]
-        public async Task<IResult> DeleteMemory(string collection, [FromQuery(Name ="uid")] string memoryUid) 
+        [HttpDelete("{collection}/{uid}")]
+        public async Task<IResult> DeleteMemory(string collection, string uid) 
         {
-            var result = await embeddingService.RemoveEmbeddings(collection, memoryUid);
+            var result = await embeddingService.RemoveEmbeddings(collection, uid);
             return Results.Ok(result);
         }
 
