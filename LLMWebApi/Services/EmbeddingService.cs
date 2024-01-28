@@ -75,9 +75,57 @@ namespace LLMWebApi.Services
             return embeddings;
         }
 
-        public async Task RemoveEmbeddings(string collection, string uid)
+        public async Task<string> RemoveEmbeddings(string collection, string uid)
         {
             await VectorDbService.Memory.RemoveAsync(collection, uid);
+
+#pragma warning disable SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            
+            MemoryQueryResult? result = await VectorDbService.Memory.GetAsync(collection, uid);
+
+#pragma warning restore SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            
+            if(result == null) {
+                return $"Memory with uid {uid} deleted successfully";
+            }
+
+            return $"Error deleting memory with {uid}";
+        }
+
+        public async Task<string> RemoveEmbeddingsBatch(string collection, string[] uids) 
+        {
+            var NoOfmemoriesToDelete = uids.Length;
+            List<string> retrievedMemories = [];
+            List<string> nonDeletedUids = [];
+    
+#pragma warning disable SKEXP0026 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            
+            await VectorDbService.MemoryStore.RemoveBatchAsync(collection, uids);
+#pragma warning restore SKEXP0026 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+
+#pragma warning disable SKEXP0026 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            
+            await foreach(var memory in VectorDbService.MemoryStore.GetBatchAsync(collection, uids))
+            {
+                retrievedMemories.Add(memory.Key);
+            }
+#pragma warning restore SKEXP0026 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+        
+            if(retrievedMemories.Count != NoOfmemoriesToDelete)
+            {
+                foreach(var uid in uids)
+                {
+                    if (retrievedMemories.Contains(uid))
+                    {
+                        continue;
+                    }
+                    nonDeletedUids.Add(uid);
+                }
+
+                return $"Error deleting memories with uid {nonDeletedUids}";
+            }
+
+            return $"All {NoOfmemoriesToDelete} memories deleted successfully!";
         }
     }
 }

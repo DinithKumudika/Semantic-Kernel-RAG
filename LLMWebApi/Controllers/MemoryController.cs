@@ -19,6 +19,7 @@ namespace LLMWebApi.Controllers
         }
 
         // Create embeddings in a collection
+        // http://localhost:5031/api/memory/create/terms-and-conditions
         [HttpGet("create/{category}")]
         public async Task<IResult> CreateMemory(string category)
         {
@@ -33,11 +34,20 @@ namespace LLMWebApi.Controllers
             return Results.Ok(embeddings);
         }
 
+        // Delete a memory from a collection
         [HttpDelete("{collection}")]
-        public async Task<IResult> DeleteMemory(string collection, [FromQuery(Name ="id")] string memoryUid) 
+        public async Task<IResult> DeleteMemory(string collection, [FromQuery(Name ="uid")] string memoryUid) 
         {
-            await embeddingService.RemoveEmbeddings(collection, memoryUid);
-            return Results.Ok($"embedding with {memoryUid} deleted successfully!");
+            var result = await embeddingService.RemoveEmbeddings(collection, memoryUid);
+            return Results.Ok(result);
+        }
+
+        // Delete set of memories from a collection
+        [HttpDelete("batch/{collection}")]
+        public async Task<IResult> DeleteMemoryBatch(string collection, [FromQuery(Name ="uids")] string[] memoryUids) 
+        {
+            var result = await embeddingService.RemoveEmbeddingsBatch(collection, memoryUids);
+            return Results.Ok(result);
         }
     }
 }
