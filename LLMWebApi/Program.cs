@@ -11,6 +11,7 @@ builder.Services.AddSwaggerGen();
 
 // Bot intialization
 BotService.Init(builder);
+
 // OpenAI embedding initialization
 EmbeddingService.Init(BotService.KernelBuilder, builder);
 // Qdrant Memory initialization

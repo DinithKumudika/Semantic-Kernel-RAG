@@ -11,20 +11,20 @@ template: |
       {{/each}}
   {{/each}}
 
-  {{ConversationSummaryPlugin.SummarizeConversation history}}
+  {{history}}
 
-  <message role="user">{{request}}</message>
+  <message role="user">{{query}}</message>
   <message role="system">Intent:</message>
 template_format: handlebars
 input_variables:
   - name:          choices
     description:   The choices for the AI to choose from
-    default:       ContinueConversation, EndConversation
+    default:       ContinueConversation
   - name:          fewShotExamples
     description:   Few shot examples for the AI to learn from
     is_required:   true
-  - name:          request
-    description:   The user's request
+  - name:          query
+    description:   The user's query
     is_required:   true
 execution_settings:
   default:

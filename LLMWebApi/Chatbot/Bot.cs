@@ -34,7 +34,7 @@ namespace LLMWebApi.Chatbot
             botKernel = kernelBuilder!.Build();
         }
 
-        protected static void CreateBasicKernelBuilder()
+        protected static IKernelBuilder CreateBasicKernelBuilder()
         {
             kernelBuilder = Kernel.CreateBuilder();
 
@@ -56,16 +56,8 @@ namespace LLMWebApi.Chatbot
             {
                 Console.WriteLine("Basic Kernel Configuration Completed...");
             }
-        }
 
-        private static IKernelBuilder AddNativePlugins(IKernelBuilder kernelBuilder, List<IKernelBuilderPlugins> plugins)
-        {
-            return kernelBuilder;
-        }
-
-        private static IKernelBuilder AddSemanticPlugins(IKernelBuilder kernelBuilder, List<IKernelBuilderPlugins> plugins)
-        {
-            return kernelBuilder;
+            return kernelBuilder!;
         }
 
     }

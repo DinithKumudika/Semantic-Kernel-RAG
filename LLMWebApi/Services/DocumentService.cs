@@ -1,14 +1,16 @@
-using Microsoft.Extensions.Azure;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.SemanticKernel.Text;
 using UglyToad.PdfPig;
-using UglyToad.PdfPig.Content;
 using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 
 namespace LLMWebApi.Services 
 {
     public class DocumentService 
     {
+        [Required]
         public string folderPath;
+        public int DocumentLineSplitMaxTokens {get; set;} = 128;
+        public int DocumentChunkMaxTokens {get; set;} = 1024;
 
         public DocumentService(string folderPath)
         {
@@ -86,9 +88,11 @@ namespace LLMWebApi.Services
                 if (pageText.Length > 2048)
                 {
 #pragma warning disable SKEXP0055 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+                    
                     var lines = TextChunker
-                    .SplitPlainTextLines(pageText, 128);
-                    paragraphs = TextChunker.SplitPlainTextParagraphs(lines, 1024);
+                    .SplitPlainTextLines(pageText, DocumentLineSplitMaxTokens);
+                    paragraphs = TextChunker.SplitPlainTextParagraphs(lines, DocumentChunkMaxTokens);
+                    
 #pragma warning restore SKEXP0055 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
                 }
                 else
