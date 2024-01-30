@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using LLMWebApi.Chatbot.Prompts;
 using LLMWebApi.Services;
-using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.PromptTemplates.Handlebars;
@@ -25,6 +24,7 @@ namespace LLMWebApi.Chatbot.Plugins
         public static async Task<string> ExtractUserIntent([Description("user's query to the chatbot")] string query)
         {
             ChatHistory chatHistory = [];
+            chatHistory.Add(PromptsOptions.masterPrompt);
             
             var ExtractIntentPromptYaml = Path.Combine(Directory.GetCurrentDirectory(), "Chatbot", "Prompts", "ExtractIntent", "ExtractIntent.yaml");
             

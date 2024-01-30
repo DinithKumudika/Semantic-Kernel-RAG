@@ -21,9 +21,12 @@ namespace LLMWebApi.Chatbot.Prompts
             "TeenPlusAccountTerms&ConditionsInquiry"
         ];
 
-        public static ChatHistory masterPrompt = [
-            new ChatMessageContent(AuthorRole.System, ""),
-        ];
+        public static ChatMessageContent masterPrompt = new ChatMessageContent(
+            AuthorRole.System,
+            @"You are a helpful AI assistant that has expert knowledge on financial/banking domain. 
+            You have access to the knowledge base of financial and bank related documentations. 
+            Answer the user's queries based on that domain specific knowledge and the knowledge you already have."
+        );
 
         public static List<ChatHistory> extractIntentFewShot = [
             [

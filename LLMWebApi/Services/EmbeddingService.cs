@@ -1,4 +1,5 @@
 using LLMWebApi.Exceptions;
+using LLMWebApi.Models;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Memory;
 using static LLMWebApi.Configuration.Configuration;
@@ -59,6 +60,8 @@ namespace LLMWebApi.Services
                             Console.WriteLine($"creating embedding for paragraph {paragraphs.IndexOf(paragraph) + 1}...");
 
                             string id = GetEmbeddingId(documentName, pageNo, paragraphs.IndexOf(paragraph));
+
+                            // var memory = new Memory();
                             string uid = await VectorDbService.Memory.SaveInformationAsync(collection, paragraph, id);
 
                             Console.WriteLine($"id of saved memory record: {id}");
