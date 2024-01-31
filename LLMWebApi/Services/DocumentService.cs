@@ -1,85 +1,100 @@
 using System.ComponentModel.DataAnnotations;
+using LLMWebApi.Models;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.SemanticKernel.Text;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 
-namespace LLMWebApi.Services 
+namespace LLMWebApi.Services
 {
-    public class DocumentService 
+    public class DocumentService
     {
-        [Required]
-        public string folderPath;
-        public int DocumentLineSplitMaxTokens {get; set;} = 128;
-        public int DocumentChunkMaxTokens {get; set;} = 1024;
+        public Document? document;
 
-        public DocumentService(string folderPath)
+        public string DataDir { get; set; } = Path.Combine(Directory.GetCurrentDirectory(), "data");
+        public int DocumentLineSplitMaxTokens { get; set; } = 128;
+        public int DocumentChunkMaxTokens { get; set; } = 1024;
+
+        public DocumentService(Document document)
         {
-            this.folderPath = folderPath;
+            this.document = document;
         }
 
-        public List<Dictionary<string, object>> ExtractFromDocumentDir()
+        public DocumentText? ExtractFromDocument()
         {
-            if (Directory.Exists(this.folderPath))
+            if (this.document != null)
             {
-                string[] files = Directory.GetFiles(this.folderPath, "*.pdf");
-                List<Dictionary<string, object>> documents = [];
+                var documentDirs = Directory.GetDirectories(DataDir);
 
-                foreach (var file in files)
+                foreach (var dir in documentDirs)
                 {
-                    documents.Add(ExtractText(file));
-                }
+                    Console.WriteLine($"searching {dir} directory in data");
 
-                return documents;
+                    var filePath = Path.Combine(DataDir, dir, this.document.FileName);
+
+                    Console.WriteLine($"filepath: {filePath}");
+
+                    if (File.Exists(filePath))
+                    {
+                        Console.WriteLine($"{this.document.FileName} exists in {dir} directory");
+                        return ExtractText(filePath);
+                    }
+
+                    return null;
+                }
             }
 
-            return [];
+            return null;
         }
 
         public void GetMetaData(PdfDocument document)
         {
-                string producer = document.Information.Producer;
-                string title = document.Information.Title;
-                string keywords = document.Information.Keywords;
+            string producer = document.Information.Producer;
+            string title = document.Information.Title;
+            string keywords = document.Information.Keywords;
 
-                if(title == null) 
-                {
-                    Console.WriteLine("No title found for the document");
-                }
-                else 
-                {
-                    Console.WriteLine($"title: {title}");
-                }
+            if (title == null)
+            {
+                Console.WriteLine("No title found for the document");
+            }
+            else
+            {
+                Console.WriteLine($"title: {title}");
+            }
 
-                if(title == null) 
-                {
-                    Console.WriteLine("No keywords found for the document");
-                }
-                else 
-                {
-                    Console.WriteLine($"keywords: {keywords}");
-                }
+            if (title == null)
+            {
+                Console.WriteLine("No keywords found for the document");
+            }
+            else
+            {
+                Console.WriteLine($"keywords: {keywords}");
+            }
         }
 
-        public Dictionary<string, object> ExtractText(string filePath)
+        public DocumentText ExtractText(string filePath)
         {
             Console.WriteLine($"Processing {filePath}...");
 
             using PdfDocument document = PdfDocument.Open(filePath);
-            int pageCount = document.NumberOfPages;
 
-            Dictionary<string, object> doc = [];
-            doc.Add("pdfName", Path.GetFileName(filePath));
-            doc.Add("noOfPages", pageCount);
+            var documentText = new DocumentText
+            {
+                NoOfPages = document.NumberOfPages
+            };
 
             Console.WriteLine($"document: {Path.GetFileName(filePath)}");
 
-            doc.Add("content", new List<Dictionary<string, object>>());
+            // doc.Add("content", new List<Dictionary<string, object>>());
 
             foreach (var page in document.GetPages())
             {
-                Console.WriteLine($"Processing page {page.Number} out of {pageCount}");
+                Console.WriteLine($"Processing page {page.Number} out of {document.NumberOfPages}");
 
-                var pageContent = new Dictionary<string, object>();
+                var pageContent = new Page
+                {
+                    PageNo = page.Number
+                };
 
                 var pageText = ContentOrderTextExtractor.GetText(page);
                 var paragraphs = new List<string>();
@@ -88,33 +103,29 @@ namespace LLMWebApi.Services
                 if (pageText.Length > 2048)
                 {
 #pragma warning disable SKEXP0055 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-                    
+
                     var lines = TextChunker
                     .SplitPlainTextLines(pageText, DocumentLineSplitMaxTokens);
-                    paragraphs = TextChunker.SplitPlainTextParagraphs(lines, DocumentChunkMaxTokens);
-                    
+                    pageContent.Paragraphs = TextChunker.SplitPlainTextParagraphs(lines, DocumentChunkMaxTokens);
+
 #pragma warning restore SKEXP0055 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
                 }
                 else
                 {
-                    paragraphs.Add(pageText);
+                    pageContent.Paragraphs.Add(pageText);
                 }
 
-                pageContent.Add("pageNo", page.Number);
-                pageContent.Add("paragraphs", paragraphs);
+                Console.WriteLine($"page {page.Number} has {pageContent.Paragraphs} paragraphs");
 
-                Console.WriteLine($"page {page.Number} has {paragraphs.Count} paragraphs");
-
-                foreach (var paragraph in paragraphs)
+                foreach (var paragraph in pageContent.Paragraphs)
                 {
-                    var paragraphId = paragraphs.IndexOf(paragraph);
+                    var paragraphId = pageContent.Paragraphs.IndexOf(paragraph);
                     Console.WriteLine($"Processing paragraph {paragraphId}");
                 }
-                List<Dictionary<string, object>> docContent = (List<Dictionary<string, object>>)doc["content"];
-                docContent.Add(pageContent);
+                documentText.Content.Add(pageContent);
             }
 
-            return doc;
+            return documentText;
         }
     }
 }

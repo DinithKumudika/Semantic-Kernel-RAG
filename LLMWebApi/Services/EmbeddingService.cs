@@ -10,7 +10,7 @@ namespace LLMWebApi.Services
     {
         protected static IKernelBuilder? kernelBuilder;
         protected static OpenAIConfig? openAIConfig;
-        
+
         // Register embedding service with the kernel
         public static void Init(IKernelBuilder kernelBuilder, WebApplicationBuilder builder)
         {
@@ -32,51 +32,71 @@ namespace LLMWebApi.Services
             return $"{docName}-{pageNo}-{paragraphIdx + 1}";
         }
 
-#pragma warning disable SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-        
-        public async Task<List<Dictionary<string, string>>> BuildEmbeddings(string collection, DocumentService documentService)
-#pragma warning restore SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+        public async Task<List<Memory>> BuildEmbeddingsFromFile(DocumentService documentService)
         {
-            List<Dictionary<string, object>> documents = documentService.ExtractFromDocumentDir();
-            List<Dictionary<string, string>> embeddings = [];
-
-            if(documents.Count != 0)
+            if (documentService.document != null)
             {
-                foreach (var doc in documents)
+                List<Memory> embeddings = [];
+                var documentText = documentService.ExtractFromDocument();
+
+                if (documentText != null)
                 {
-                    string documentName = (string)doc["pdfName"];
-                    Console.WriteLine($"creating embeddings for {documentName}...");
 
-                    List<Dictionary<string, object>> pageContents = (List<Dictionary<string, object>>)doc["content"];
-                    
-                    foreach (var pageContent in pageContents)
+                    Console.WriteLine($"creating embeddings for {documentService.document.FileName}...");
+
+                    foreach (var pageContent in documentText.Content)
                     {
-                        int pageNo = (int)pageContent["pageNo"];
-                        Console.WriteLine($"creating embeddings for paragraphs in page {pageNo}...");
-                        List<string> paragraphs = (List<string>)pageContent["paragraphs"];
+                        Console.WriteLine($"creating embeddings for paragraphs in page {pageContent.PageNo}...");
+                        var paragraphs = pageContent.Paragraphs;
 
-                        foreach (var paragraph in paragraphs)
+                        foreach (var paragraph in pageContent.Paragraphs)
                         {
-                            Console.WriteLine($"creating embedding for paragraph {paragraphs.IndexOf(paragraph) + 1}...");
+                            Console.WriteLine($"creating embedding for paragraph {pageContent.Paragraphs.IndexOf(paragraph) + 1}...");
 
-                            string id = GetEmbeddingId(documentName, pageNo, paragraphs.IndexOf(paragraph));
+                            string id = GetEmbeddingId(
+                                documentService.document.FileName,
+                                pageContent.PageNo,
+                                pageContent.Paragraphs.IndexOf(paragraph)
+                            );
 
-                            // var memory = new Memory();
-                            string uid = await VectorDbService.Memory.SaveInformationAsync(collection, paragraph, id);
+                            string uid = await VectorDbService.Memory.SaveInformationAsync(
+                                documentService.document.Collection!,
+                                paragraph,
+                                id
+                            );
 
-                            Console.WriteLine($"id of saved memory record: {id}");
-                            Console.WriteLine($"unique id of saved memory record: {uid}");
+                            if (uid != null)
+                            {
+                                var createdAt = DateTime.Now.ToLocalTime().ToString();
 
-                            Dictionary<string, string> point = [];
-                            point.Add("uid", uid);
-                            point.Add("id", id);
-                            
-                            embeddings.Add(point);
-                        } 
+                                Console.WriteLine($"id of saved memory record: {id}");
+                                Console.WriteLine($"unique id of saved memory record: {uid}");
+
+                                var memory = new Memory
+                                {
+                                    UId = uid,
+                                    Id = id,
+                                    Collection = documentService.document.Collection!,
+                                    Description = documentService.document.Description,
+                                    Metadata = documentService.document.Metadata,
+                                    CreatedAt = createdAt
+                                };
+
+                                embeddings.Add(memory);
+                            }
+                            else
+                            {
+                                return [];
+                            }
+                        }
                     }
+                    return embeddings;
                 }
+                return [];
             }
-            return embeddings;
+
+            return [];
+
         }
 
         public async Task<string> RemoveEmbeddings(string collection, string uid)
@@ -84,40 +104,41 @@ namespace LLMWebApi.Services
             await VectorDbService.Memory.RemoveAsync(collection, uid);
 
 #pragma warning disable SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-            
+
             MemoryQueryResult? result = await VectorDbService.Memory.GetAsync(collection, uid);
 
 #pragma warning restore SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-            
-            if(result == null) {
+
+            if (result == null)
+            {
                 return $"Memory with uid {uid} deleted successfully";
             }
 
             return $"Error deleting memory with {uid}";
         }
 
-        public async Task<string> RemoveEmbeddingsBatch(string collection, string[] uids) 
+        public async Task<string> RemoveEmbeddingsBatch(string collection, string[] uids)
         {
             var NoOfmemoriesToDelete = uids.Length;
             List<string> retrievedMemories = [];
             List<string> nonDeletedUids = [];
-    
+
 #pragma warning disable SKEXP0026 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-            
+
             await VectorDbService.MemoryStore.RemoveBatchAsync(collection, uids);
 #pragma warning restore SKEXP0026 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
 #pragma warning disable SKEXP0026 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-            
-            await foreach(var memory in VectorDbService.MemoryStore.GetBatchAsync(collection, uids))
+
+            await foreach (var memory in VectorDbService.MemoryStore.GetBatchAsync(collection, uids))
             {
                 retrievedMemories.Add(memory.Key);
             }
 #pragma warning restore SKEXP0026 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-        
-            if(retrievedMemories.Count != NoOfmemoriesToDelete)
+
+            if (retrievedMemories.Count != NoOfmemoriesToDelete)
             {
-                foreach(var uid in uids)
+                foreach (var uid in uids)
                 {
                     if (retrievedMemories.Contains(uid))
                     {

@@ -1,5 +1,4 @@
-using System.Text.Json;
-using HandlebarsDotNet.Helpers.Enums;
+using LLMWebApi.Models;
 using LLMWebApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,24 +18,40 @@ namespace LLMWebApi.Controllers
             this.embeddingService = new EmbeddingService();
         }
 
-        // Create embeddings in a collection
-        // http://localhost:5031/api/memory/create/terms-and-conditions
-        [HttpPost("create/{collection}")]
-        public async Task<IResult> CreateMemory(string collection, [FromBody] dynamic data)
+        // Create embeddings in a collection using document
+        // http://localhost:5031/api/memory/create
+        [HttpPost("create", Name="CreateMemoriesFromFile")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IResult> CreateMemoriesFromFile([FromBody] Document document)
         {
-            Console.WriteLine($"adding memories to {collection} collection");
-            string dataFilePath = Path.Combine(Directory.GetCurrentDirectory(), "data");
+            
+            if(document == null)
+            {
+                return (IResult)BadRequest(document);
+            }
+            
+            Console.WriteLine($"adding memories to {document.Collection} collection");
+            var documentService = new DocumentService(document);
+            var embeddings = await embeddingService.BuildEmbeddingsFromFile(documentService);
 
-            var docFolder = Path.Combine(dataFilePath, data.GetProperty("dataDir").ToString());
-            var documentService = new DocumentService(docFolder);
+            if(embeddings.Count == 0)  
+            {
+                return Results.StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            return Results.CreatedAtRoute("GetMemory",embeddings);
+        }
 
-            var embeddings = await embeddingService.BuildEmbeddings(collection, documentService);
 
-            return Results.Ok(embeddings);
+        [HttpGet("{id}", Name ="GetMemory")]
+        public IResult GetMemory(string id) 
+        {
+            return Results.Ok();
         }
 
         // Delete a memory from a collection
         [HttpDelete("{collection}/{uid}")]
+        [ProducesResponseType(200)]
         public async Task<IResult> DeleteMemory(string collection, string uid) 
         {
             var result = await embeddingService.RemoveEmbeddings(collection, uid);
@@ -45,6 +60,7 @@ namespace LLMWebApi.Controllers
 
         // Delete set of memories from a collection
         [HttpDelete("batch/{collection}")]
+        [ProducesResponseType(200)]
         public async Task<IResult> DeleteMemoryBatch(string collection, [FromQuery(Name ="uids")] string[] memoryUids) 
         {
             var result = await embeddingService.RemoveEmbeddingsBatch(collection, memoryUids);
