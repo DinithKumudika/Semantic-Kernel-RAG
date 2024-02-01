@@ -26,7 +26,13 @@ namespace LLMWebApi.Chatbot.Plugins
             ChatHistory chatHistory = [];
             chatHistory.Add(PromptsOptions.masterPrompt);
             
-            var ExtractIntentPromptYaml = Path.Combine(Directory.GetCurrentDirectory(), "Chatbot", "Prompts", "ExtractIntent", "ExtractIntent.yaml");
+            var ExtractIntentPromptYaml = Path.Combine(
+                Directory.GetCurrentDirectory(), 
+                "Chatbot", 
+                "Prompts", 
+                "ExtractIntent", 
+                "ExtractIntent.yaml"
+            );
             
             var ExtractIntentPrompt = File.ReadAllText(ExtractIntentPromptYaml);
 
@@ -49,6 +55,40 @@ namespace LLMWebApi.Chatbot.Plugins
             );
 
             return intent.ToString();
+        }
+
+        [KernelFunction, Description("Find the Qdrant db collection that match with a user intent")]
+        public async Task<string> MapIntentToCollection([Description("intent extracted from a user query")] string intent)
+        {
+            ChatHistory chatHistory = [];
+            var MapIntentToCollectionPromptYaml = Path.Combine(
+                Directory.GetCurrentDirectory(), 
+                "Chatbot", 
+                "Prompts", 
+                "MapIntentToCollection", 
+                "MapIntentToCollection.yaml"
+            );
+
+            var ExtractIntentPrompt = File.ReadAllText(MapIntentToCollectionPromptYaml);
+
+            var mapIntentToCollectionFunction = BotService.BotKernel.CreateFunctionFromPromptYaml(
+                ExtractIntentPrompt,
+                promptTemplateFactory: new HandlebarsPromptTemplateFactory()
+            );
+
+            var handlebarArguments = new KernelArguments ()
+            {
+                {"query", intent},
+                {"history", chatHistory}
+            };
+
+            var collection = await BotService.BotKernel.InvokeAsync(
+                function: mapIntentToCollectionFunction,
+                arguments: handlebarArguments
+            );
+
+
+            return collection.ToString();
         }
 
         // private async Task<string> GetChatHistoryAsync()

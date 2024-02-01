@@ -1,3 +1,4 @@
+using LLMWebApi;
 using LLMWebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,8 @@ BotService.Init(builder);
 EmbeddingService.Init(BotService.KernelBuilder, builder);
 // Qdrant Memory initialization
 VectorDbService.Init(builder, BotService.BotKernel);
+
+var db = new ChatHistoryContext();
 
 var app = builder.Build();
 

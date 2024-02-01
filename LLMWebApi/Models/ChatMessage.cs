@@ -1,17 +1,16 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace LLMWebApi.Models {
-    public class ChateMessage 
+    public class ChatMessage 
     {
-        [JsonPropertyName("user_id")]
-        public string? UserId {get; set;}
-        [JsonPropertyName("username")]
-        public string? Username {get; set;}
-        [JsonPropertyName("chat_id")]
-        public string? ChatId {get; set;}
-        [JsonPropertyName("message")]
-        public string? Message {get; set;}
-        [JsonPropertyName("message_type")]
-        public string? MessageType {get; set;}
+        [JsonPropertyName("id")]
+        public int Id {get; set;}
+        [JsonPropertyName("content")]
+        [Required]
+        public string? Content {get; set;}
+        [JsonPropertyName("role")]
+        [Required]
+        public string? Role {get; set;}
     }
 }
