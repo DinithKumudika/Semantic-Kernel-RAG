@@ -1,0 +1,27 @@
+name: mapIntentToCollection
+description: Find the Qdrant vector db collection that matches with the user Intent.
+template: |
+  <message role="system">Instructions: You'll be provided with a list of collection names in a Qdrant vector db collection and a Intent of a user's query. 
+  Do not explain the reasoning, just reply back with the collection name. If you are unsure, reply with {{choices[0]}}.
+  Choices: {{collections}}.</message>
+
+  {{history}}
+
+  <message role="user">{{intent}}</message>
+  <message role="system">Collection Name:</message>
+template_format: handlebars
+input_variables:
+  - name:          collections
+    description:   List of Qdrant vector db collections
+    is_required: true
+  - name:          intent
+    description:   An intent extracted from a user query
+    is_required:   true
+execution_settings:
+  default:
+    max_tokens:   10
+    temperature:  0
+  gpt-3.5-turbo:
+    model_id:     gpt-3.5-turbo-0613
+    max_tokens:   10
+    temperature:  0.2

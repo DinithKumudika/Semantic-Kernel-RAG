@@ -62,7 +62,9 @@ namespace LLMWebApi.Services
                             string uid = await VectorDbService.Memory.SaveInformationAsync(
                                 documentService.document.Collection!,
                                 paragraph,
-                                id
+                                id,
+                                documentService.document.Description,
+                                string.Join(",", documentService.document.Metadata)
                             );
 
                             if (uid != null)
@@ -99,22 +101,33 @@ namespace LLMWebApi.Services
 
         }
 
-        public async Task<string> RemoveEmbeddings(string collection, string uid)
+        public async Task<CustomHttpResponse> RemoveEmbeddings(string collection, string id)
         {
-            await VectorDbService.Memory.RemoveAsync(collection, uid);
-
-#pragma warning disable SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-
-            MemoryQueryResult? result = await VectorDbService.Memory.GetAsync(collection, uid);
-
-#pragma warning restore SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-
-            if (result == null)
+            if(await VectorDbService.IsMemoryExists(collection, id) == false)
             {
-                return $"Memory with uid {uid} deleted successfully";
+                return new CustomHttpResponse 
+                {
+                    Status = 404,
+                    Message = $"Memory with id {id} does not exists in the {collection} collection"
+                };
+            }
+            
+            await VectorDbService.Memory.RemoveAsync(collection, id);
+
+            if (await VectorDbService.IsMemoryExists(collection, id) == false)
+            {
+                return new CustomHttpResponse 
+                {
+                    Status = 200,
+                    Message = $"Memory with id {id} deleted successfully"
+                };
             }
 
-            return $"Error deleting memory with {uid}";
+            return new CustomHttpResponse 
+            {
+                Status = 500,
+                Message = $"Error deleting memory with id {id}"
+            };
         }
 
         public async Task<string> RemoveEmbeddingsBatch(string collection, string[] uids)

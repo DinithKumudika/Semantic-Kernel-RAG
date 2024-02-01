@@ -62,6 +62,7 @@ namespace LLMWebApi.Services {
             await memoryStore!
             .CreateCollectionAsync(collection);
             #pragma warning restore SKEXP0026 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            
             var isCollectionExists = await HasCollection(collection);
             
             if(isCollectionExists)
@@ -69,6 +70,21 @@ namespace LLMWebApi.Services {
                 return true;
             }
             return false;
+        }
+
+        public static async Task<bool> IsMemoryExists(string collection, string id) 
+        {
+#pragma warning disable SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            
+            MemoryQueryResult? result = await VectorDbService.Memory.GetAsync(collection, id);
+#pragma warning restore SKEXP0003 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+        
+            if(result == null)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
