@@ -79,7 +79,8 @@ namespace LLMWebApi.Chatbot.Plugins
             var handlebarArguments = new KernelArguments ()
             {
                 {"query", intent},
-                {"history", chatHistory}
+                {"history", chatHistory},
+                {"collections", await VectorDbService.GetCollections()}
             };
 
             var collection = await BotService.BotKernel.InvokeAsync(

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LLMWebApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+613834f8e2565a5d26ba2def43123d92bf433e72")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5ec59df2c4c0730597e24778d3cc47f0d3234948")]
 [assembly: System.Reflection.AssemblyProductAttribute("LLMWebApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LLMWebApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

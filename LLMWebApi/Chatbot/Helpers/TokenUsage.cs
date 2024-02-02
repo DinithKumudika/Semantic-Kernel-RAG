@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Json.More;
 
-namespace SKTestApp.Helpers {
+namespace LLMWebApi.Chatbot.Helpers {
     public static class TokenUsage 
     {
         public static void GetTokenCost(IReadOnlyDictionary<string, object?> metadata) 
